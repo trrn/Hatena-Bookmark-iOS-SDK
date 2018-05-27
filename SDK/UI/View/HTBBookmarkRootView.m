@@ -148,7 +148,12 @@
         minimumHeight += HTB_BOOKMARK_ROOT_VIEW_TAG_CANONICAL_VIEW_HEIGHT + HTB_BOOKMARK_ROOT_VIEW_TAG_CANONICAL_VIEW_BOTTOM_MARGIN;
     }
 
-    CGFloat y = self.bounds.size.height - self.scrollView.contentInset.top;
+    CGFloat y = self.bounds.size.height;
+    if (@available(iOS 11.0, *)) {
+        y -= self.scrollView.safeAreaInsets.top;
+    } else if (@available(iOS 7.0, *)) {
+        y -= self.scrollView.contentInset.top;
+    }
     if (self.frame.size.height < minimumHeight) {
         y = minimumHeight;
     }

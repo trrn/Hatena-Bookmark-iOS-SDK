@@ -187,10 +187,12 @@
 {
     [super viewWillLayoutSubviews];
 #if __IPHONE_7_0 && __IPHONE_OS_VERSION_MAX_ALLOWED >=  __IPHONE_7_0
-    if ([self respondsToSelector:@selector(topLayoutGuide)]) { // for iOS7
+    if (@available(iOS 11.0, *)) {
+        self.rootView.scrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
+    } else if (@available(iOS 7.0, *)) {
         self.rootView.scrollView.contentInset = UIEdgeInsetsMake(self.topLayoutGuide.length, 0, 0, 0);
     }
-    
+
     /**
      * on iOS7, when navigationController.view.frame is changed, but it's child view controllers' views are not resized.
      * So, change self.rootView.frame forcibly.
