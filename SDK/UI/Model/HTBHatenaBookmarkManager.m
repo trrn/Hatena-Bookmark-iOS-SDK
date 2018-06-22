@@ -150,7 +150,14 @@
 {
     [self.apiClient getEntryWithURL:url success:^(HatenaAFHTTPRequestOperation *operation, id responseJSON) {
 
-        HTBBookmarkEntry *entry = [[HTBBookmarkEntry alloc] initWithJSON:responseJSON];
+        NSError *error = nil;
+        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:responseJSON options:0 error:&error];
+        if (error) {
+            if (failure) failure(error);
+            return;
+        }
+
+        HTBBookmarkEntry *entry = [[HTBBookmarkEntry alloc] initWithJSON:dict];
             if (success) success(entry);
 
         } failure:^(HatenaAFHTTPRequestOperation *operation, NSError *error) {

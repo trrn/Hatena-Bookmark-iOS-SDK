@@ -27,7 +27,7 @@
 
 #import "HTBUserManager.h"
 
-#define kHatenaBookmarkBaseURLString @"http://api.b.hatena.ne.jp/"
+#define kHatenaBookmarkBaseURLString @"http://b.hatena.ne.jp/"
 
 #define KHatenaOAuthReuestTokenPath @"https://www.hatena.ne.jp/oauth/initiate"
 #define kHatenaOAuthUserAuthorizationPath @"https://www.hatena.ne.jp/oauth/authorize"
@@ -247,7 +247,7 @@ static NSDictionary * HTBParametersFromQueryString(NSString *queryString) {
                    success:(void (^)(HatenaAFHTTPRequestOperation *operation, id responseJSON))success
                    failure:(void (^)(HatenaAFHTTPRequestOperation *operation, NSError *error))failure
 {
-    NSString *path = @"/1/entry.json";
+    NSString *path = @"/entry/json/";
     NSDictionary *parameters = @{
         @"url": [bookmarkURL absoluteString],
         @"with_tag_recommendations" : @YES,

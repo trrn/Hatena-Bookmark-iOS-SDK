@@ -29,6 +29,8 @@
 #define kHTBBookmarkEntryEntryCount            @"count"
 #define kHTBBookmarkEntryEntryRecommendedTags  @"recommend_tags"
 #define kHTBBookmarkEntrySmartphoneAppEntryUrl @"smartphone_app_entry_url"
+#define kHTBBookmarkEntryBookmarks             @"bookmarks"
+#define kHTBBookmarkEntryTags                  @"tags"
 
 @implementation HTBBookmarkEntry
 
@@ -38,6 +40,8 @@
     if (self) {
         if ([json[kHTBBookmarkEntryUrl] isKindOfClass:[NSString class]]) {
             self.URL = [NSURL URLWithString:json[kHTBBookmarkEntryUrl]];
+            self.faviconURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://favicon.hatena.ne.jp/?url=%@://%@", self.URL.scheme, self.URL.host]];
+            self.smartphoneAppEntryURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://b.hatena.ne.jp/bookmarklet.touch?mode=comment&iphone_app=1&url=%@", self.URL.absoluteString]];
         }
         if ([json[kHTBBookmarkEntryFaviconUrl] isKindOfClass:[NSString class]]) {
             self.faviconURL = [NSURL URLWithString:json[kHTBBookmarkEntryFaviconUrl]];
@@ -50,6 +54,27 @@
         }
         if ([json[kHTBBookmarkEntryEntryCount] isKindOfClass:[NSNumber class]]) {
             self.count = [json[kHTBBookmarkEntryEntryCount] integerValue];
+        }
+        if ([json[kHTBBookmarkEntryBookmarks] isKindOfClass:[NSArray class]]) {
+            NSMutableDictionary *counter = NSMutableDictionary.new;
+            for (NSDictionary *bookmark in json[kHTBBookmarkEntryBookmarks]) {
+                for (NSString *tag in bookmark[kHTBBookmarkEntryTags]) {
+                    if (counter[tag]) {
+                        counter[tag] = @([counter[tag] integerValue] + 1);
+                    } else {
+                        counter[tag] = @1;
+                    }
+                }
+            }
+            self.recommendTags = [counter keysSortedByValueUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+                if ([obj1 integerValue] > [obj2 integerValue]) {
+                    return (NSComparisonResult)NSOrderedAscending;
+                } else if ([obj1 integerValue] < [obj2 integerValue]) {
+                    return (NSComparisonResult)NSOrderedDescending;
+                } else {
+                    return (NSComparisonResult)NSOrderedSame;
+                }
+            }];
         }
         if ([json[kHTBBookmarkEntryEntryRecommendedTags] isKindOfClass:[NSArray class]]) {
             self.recommendTags = json[kHTBBookmarkEntryEntryRecommendedTags];
